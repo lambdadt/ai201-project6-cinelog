@@ -1,5 +1,22 @@
 # PR Response Doc — CineLog Watchlist Feature
 
+## Git log screenshot
+```
+% git log --oneline
+6c544f5 (HEAD -> feature/watchlist) docs: add PR response for all six review comments and AI usage summary
+3bfa8c4 fix: re-add WatchlistEntry model with UUID film_id after rebase
+01a0484 fix: restore WatchlistEntry model lost during rebase; change watchlist sort to date-added
+462c31b test, doc: add unit tests; add pr-response.md
+bc2b6b1 fix(add_to_watchlist): add deduplication logic
+5116fcb fix: rename save_to_watchlist to add_to_watchlist to follow proj convention
+45528d2 fix: update film retrieval method to use db.session.get in collection and watchlist services
+c20dc41 added watchlist model and endpoint fixed a bug more changes
+bbe206c (origin/main, origin/HEAD, main) Merge pull request #2 from ascherj/chore/add-gitignore
+718a9a8 chore: add .gitignore for generated files
+07ca580 refactor: migrate film IDs from integer to UUID
+014ae54 feat: initial CineLog API with film collection feature
+```
+
 ## AI Usage
 I used an AI coding agent throughout this project for codebase analysis, test generation, and review response drafting. Specific uses:
 - **AGENTS.md generation:** Pointed the agent at the full codebase to extract conventions, then manually reviewed the output against CONTRIBUTING.md for accuracy.
