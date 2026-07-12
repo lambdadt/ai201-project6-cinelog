@@ -6,9 +6,9 @@ Tests for the watchlist service.
 
 import pytest
 from app import create_app, db
-from models import User, Film
+from models import User, Film, WatchlistEntry
 from services.collection_service import FilmNotFoundError
-from services.watchlist_service import add_to_watchlist
+from services.watchlist_service import add_to_watchlist, get_watchlist
 
 
 @pytest.fixture
@@ -47,3 +47,34 @@ def test_add_to_watchlist_nonexistent_film_raises(app, sample_user):
 
         with pytest.raises(FilmNotFoundError):
             add_to_watchlist(user_id=sample_user, film_id=fake_film_id)
+
+
+# ── get_watchlist sort order ──────────────────────────────────────────────
+
+def test_get_watchlist_returns_newest_first(app, sample_user):
+    """
+    get_watchlist() should return films sorted by date_added descending
+    (most recently added first).
+    """
+    with app.app_context():
+        from datetime import datetime, timezone, timedelta
+
+        film_a = Film(title="Parasite", year=2019, genre="Thriller")
+        film_b = Film(title="Everything Everywhere All at Once", year=2022, genre="Sci-Fi")
+        db.session.add_all([film_a, film_b])
+        db.session.commit()
+
+        earlier = datetime.now(timezone.utc) - timedelta(days=5)
+        later = datetime.now(timezone.utc)
+
+        entry_a = WatchlistEntry(user_id=sample_user, film_id=film_a.id, date_added=earlier)
+        entry_b = WatchlistEntry(user_id=sample_user, film_id=film_b.id, date_added=later)
+        db.session.add_all([entry_a, entry_b])
+        db.session.commit()
+
+        watchlist = get_watchlist(sample_user)
+        titles = [f["title"] for f in watchlist]
+
+        # Everything Everywhere was added later, so it should come first
+        assert titles[0] == "Everything Everywhere All at Once"
+        assert titles[1] == "Parasite"
