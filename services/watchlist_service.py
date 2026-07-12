@@ -9,7 +9,12 @@ from models import Film, WatchlistEntry
 from services.collection_service import FilmNotFoundError
 
 
-def save_to_watchlist(user_id, film_id):
+class AlreadyInCollectionError(Exception):
+    """Raised when a film is already in the user's collection."""
+    pass
+
+
+def add_to_watchlist(user_id, film_id):
     """
     Save a film to a user's watchlist.
 
